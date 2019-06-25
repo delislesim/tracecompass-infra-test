@@ -19,6 +19,13 @@ spec:
       limits:
         memory: "2.6Gi"
         cpu: "1.3"
+	volumeMounts:
+    - name: settings-xml
+      mountPath: /home/jenkins/.m2/settings.xml
+      subPath: settings.xml
+      readOnly: true
+    - name: m2-repo
+      mountPath: /home/jenkins/.m2/repository
   - name: jnlp
     image: 'eclipsecbi/jenkins-jnlp-agent'
     volumeMounts:
@@ -28,6 +35,14 @@ spec:
   - configMap:
       name: known-hosts
     name: volume-known-hosts
+  - name: settings-xml
+    configMap: 
+      name: m2-dir
+      items:
+      - key: settings.xml
+        path: settings.xml
+  - name: m2-repo
+    emptyDir: {}
 """
 		}
 	}
@@ -44,13 +59,12 @@ spec:
 			steps {
 				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Pbuild-one-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -Dcbi.jarsigner.skip=false'
+					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true'
 				}
 			}
 			post {
 				always {
 					archiveArtifacts artifacts: '**/screenshots/*.jpeg,**/target/**/*.log, **/target/**/config.ini, **/rcptt-maven-plugin*.jar', fingerprint: false
-					junit '*/target/surefire-reports/TEST-*.xml' 
 				}
 			}
 		}
