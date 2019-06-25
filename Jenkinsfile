@@ -32,9 +32,9 @@ spec:
     - mountPath: /home/jenkins/.ssh
       name: volume-known-hosts
   volumes:
-  - configMap:
+  - name: volume-known-hosts
+    configMap:
       name: known-hosts
-    name: volume-known-hosts
   - name: settings-xml
     configMap: 
       name: m2-dir
@@ -59,7 +59,10 @@ spec:
 			steps {
 				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true'
+					sh 'echo Maven version'
+					sh 'mvn --version'
+					sh 'echo Workspace location: $WORKSPACE'
+					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true --settings /home/jenkins/.m2/settings.xml'
 				}
 			}
 			post {
