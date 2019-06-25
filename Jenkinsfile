@@ -19,7 +19,7 @@ spec:
       limits:
         memory: "2.6Gi"
         cpu: "1.3"
-	volumeMounts:
+    volumeMounts:
     - name: settings-xml
       mountPath: /home/jenkins/.m2/settings.xml
       subPath: settings.xml
