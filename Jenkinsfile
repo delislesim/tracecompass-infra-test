@@ -42,6 +42,7 @@ spec:
 	stages {
 		stage('Build') {
 			steps {
+				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
 					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Pbuild-one-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -Dcbi.jarsigner.skip=false'
 				}
