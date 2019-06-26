@@ -58,10 +58,7 @@ spec:
 			steps {
 				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh 'echo Maven version'
-					sh 'mvn --version'
-					sh 'echo Workspace location: $WORKSPACE'
-					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true --settings /home/jenkins/.m2/settings.xml'
+					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
 				}
 			}
 			post {
