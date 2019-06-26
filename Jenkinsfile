@@ -47,12 +47,11 @@ spec:
 		}
 	}
 	options {
-	    timeout(time: 60, unit: 'MINUTES')
+	    timeout(time: 4, unit: 'HOURS')
 		buildDiscarder(logRotator(numToKeepStr:'10'))
 	}
 	environment {
-	    MAVEN_OPTS="-Xms256m -Xmx2048m"
-	    M2_REPO="$WORKSPACE/m2-repo"
+	    MAVEN_OPTS="-Xms768m -Xmx2048m"
 	}
 	stages {
 		stage('Build') {
