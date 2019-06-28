@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: environment
-    image: mickaelistria/eclipse-acute-build-test-env:test
+    image: delislesim/eclipse-tracecompass-build-env:test
     tty: true
     command: [ "uid_entrypoint", "cat" ]
     resources:
