@@ -6,9 +6,7 @@ USER root
 RUN apt -y update && \
 	apt -y install openjdk-8-jdk maven
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
 
 #Back to named user
 USER 10001

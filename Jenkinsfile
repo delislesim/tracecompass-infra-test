@@ -26,6 +26,8 @@ spec:
       readOnly: true
     - name: m2-repo
       mountPath: /home/jenkins/.m2/repository
+    - name: tools
+      mountPath: /opt/tools
   - name: jnlp
     image: 'eclipsecbi/jenkins-jnlp-agent'
     volumeMounts:
@@ -43,6 +45,9 @@ spec:
         path: settings.xml
   - name: m2-repo
     emptyDir: {}
+  - name: tools
+    persistentVolumeClaim:
+      claimName: tools-claim-jiro-tracecompass
 """
 		}
 	}
@@ -58,12 +63,15 @@ spec:
 			steps {
 				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
-				}
+          withMaven(jdk: 'oracle-jdk8-latest', maven: 'apache-maven-latest') {
+					  sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
+          }
+        }
 			}
 			post {
 				always {
 					archiveArtifacts artifacts: '**/screenshots/*.jpeg,**/target/**/*.log, **/target/**/config.ini, **/rcptt-maven-plugin*.jar', fingerprint: false
+          junit '**/target/surefire-reports/*.xml'
 				}
 			}
 		}
