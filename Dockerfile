@@ -4,7 +4,8 @@ FROM eclipsecbi/ubuntu-gtk3-metacity:18.04-gtk3.22
 USER root
 
 RUN apt -y update && \
-	apt -y install openjdk-8-jdk maven
+	apt -y install build-essential
+	# apt -y install openjdk-8-jdk maven
 
 ENV LANG=en_US.UTF-8
 
