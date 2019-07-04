@@ -64,6 +64,7 @@ spec:
 				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
 				wrap([$class: 'Xvnc', useXauthority: true]) {
           withMaven(jdk: 'oracle-jdk8-latest', maven: 'apache-maven-latest') {
+            sh 'metacity --replace --sm-disable --display=0 &'
 					  sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
           }
         }
