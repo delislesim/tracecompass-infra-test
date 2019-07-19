@@ -10,6 +10,7 @@ spec:
   containers:
   - name: environment
     image: delislesim/eclipse-tracecompass-build-env:16.04
+    imagePullPolicy: Always
     tty: true
     command: [ "/bin/sh" ]
     args: ["-c", "/home/tracecompass/.vnc/xstartup.sh && cat"]
@@ -67,16 +68,17 @@ spec:
 	stages {
 		stage('Build') {
 			steps {
-				git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
-                sh 'mvn --version'
-                sh 'java -version'
-                sh 'echo $HOME'
+                checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
+				// git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
+                // sh 'mvn --version'
+                // sh 'java -version'
+                // sh 'echo $HOME'
                 // sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -DskipTests -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
-                sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
+                sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml ${MAVEN_ARGS}'
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: '**/screenshots/*.jpeg,**/target/**/*.log, **/target/**/config.ini, **/rcptt-maven-plugin*.jar', fingerprint: false
+					archiveArtifacts artifacts: '$ARCHIVE_ARTIFACTS', fingerprint: false
                     junit '**/target/surefire-reports/*.xml'
 				}
 			}
@@ -85,15 +87,15 @@ spec:
 			steps {
 				container('jnlp') {
 					sshagent (['projects-storage.eclipse.org-bot-ssh']) {
-						sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp/'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp-repository/'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/repository/'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp/*'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp-repository/*'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  /home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/repository/*'
-                        sh 'scp -r rcp/org.eclipse.tracecompass.rcp.product/target/products/trace-compass-* genie.tracecompass@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp/'
-                        sh 'scp -r rcp/org.eclipse.tracecompass.rcp.product/target/repository/* genie.tracecompass@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/rcp-repository/'
-                        sh 'scp -r releng/org.eclipse.tracecompass.releng-site/target/repository/* genie.tracecompass@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/tracecompass/test_new_ci/repository/'
+						sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
+                        sh 'scp -r ${RCP_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_DESTINATION}'
+                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
+                        sh 'scp -r ${SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${SITE_DESTINATION}'
 					}
 				}
 			}
