@@ -85,7 +85,7 @@ spec:
 		}
 		stage('Deploy') {
             when {
-                expression { return $DEPLOY }
+                expression { return params.DEPLOY }
             }
 			steps {
 				container('jnlp') {
