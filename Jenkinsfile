@@ -84,6 +84,9 @@ spec:
 			}
 		}
 		stage('Deploy') {
+            when {
+                expression { return $DEPLOY }
+            }
 			steps {
 				container('jnlp') {
 					sshagent (['projects-storage.eclipse.org-bot-ssh']) {
