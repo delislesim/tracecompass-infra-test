@@ -104,4 +104,31 @@ spec:
 			}
 		}
 	}
+    post {
+        when {
+            expression { return params.SEND_EMAIL }
+        }
+        failure {
+            emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
+            body: '''$CHANGES
+            ------------------------------------------
+            Check console output at $BUILD_URL to view the results.''',
+            recipientProviders: [culprits(), requestor()], 
+            to: '${EMAIL_RECIPIENT}'
+        }
+        fixed {
+            emailext subject: 'Build is back to normal: $PROJECT_NAME #$BUILD_NUMBER!', 
+            body: '''Check console output at $BUILD_URL to view the results.''',
+            recipientProviders: [culprits(), requestor()], 
+            to: '${EMAIL_RECIPIENT}'
+        }
+        successful {
+            emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
+            body: '''$CHANGES
+            ------------------------------------------
+            Check console output at $BUILD_URL to view the results.''',
+            recipientProviders: [culprits(), requestor()], 
+            to: '${EMAIL_RECIPIENT}'
+        }
+    }
 }
