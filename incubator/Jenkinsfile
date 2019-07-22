@@ -102,22 +102,14 @@ spec:
     failure {
       emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
       body: '''$CHANGES
-      ------------------------------------------
-      Check console output at $BUILD_URL to view the results.''',
+------------------------------------------
+Check console output at $BUILD_URL to view the results.''',
       recipientProviders: [culprits(), requestor()], 
       to: '${EMAIL_RECIPIENT}'
     }
     fixed {
       emailext subject: 'Build is back to normal: $PROJECT_NAME #$BUILD_NUMBER!', 
       body: '''Check console output at $BUILD_URL to view the results.''',
-      recipientProviders: [culprits(), requestor()], 
-      to: '${EMAIL_RECIPIENT}'
-    }
-    success {
-      emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
-      body: '''$CHANGES
-      ------------------------------------------
-      Check console output at $BUILD_URL to view the results.''',
       recipientProviders: [culprits(), requestor()], 
       to: '${EMAIL_RECIPIENT}'
     }
