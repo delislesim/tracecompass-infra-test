@@ -99,9 +99,6 @@ spec:
 		}
 	}
   post {
-    when {
-        expression { return params.SEND_EMAIL }
-    }
     failure {
       emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
       body: '''$CHANGES
@@ -116,7 +113,7 @@ spec:
       recipientProviders: [culprits(), requestor()], 
       to: '${EMAIL_RECIPIENT}'
     }
-    successful {
+    success {
       emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
       body: '''$CHANGES
       ------------------------------------------
