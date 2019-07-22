@@ -1,7 +1,7 @@
 pipeline {
 	agent {
 		kubernetes {
-			label 'tracecompass-build'
+			label 'tracecompass-incubator-build'
 			defaultContainer 'environment'
 			yaml """
 apiVersion: v1
@@ -56,7 +56,6 @@ spec:
 	options {
         timestamps()
 	    timeout(time: 4, unit: 'HOURS')
-		// buildDiscarder(logRotator(numToKeepStr:'10'))
 	}
 	tools {
         maven 'apache-maven-latest'
@@ -69,11 +68,6 @@ spec:
 		stage('Build') {
 			steps {
                 checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
-				// git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
-                // sh 'mvn --version'
-                // sh 'java -version'
-                // sh 'echo $HOME'
-                // sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -DskipTests -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
                 sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml ${MAVEN_ARGS}'
 			}
 			post {
@@ -90,15 +84,15 @@ spec:
 			steps {
 				container('jnlp') {
 					sshagent (['projects-storage.eclipse.org-bot-ssh']) {
-						sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
-                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
-                        sh 'scp -r ${RCP_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_DESTINATION}'
-                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
-                        sh 'scp -r ${SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${SITE_DESTINATION}'
+						sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
+                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
+                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
+                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
+                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
+                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
+                        sh 'scp -r ${RCP_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_DESTINATION}'
+                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
+                        sh 'scp -r ${SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${SITE_DESTINATION}'
 					}
 				}
 			}
