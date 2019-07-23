@@ -66,9 +66,20 @@ spec:
 	    MAVEN_OPTS="-Xms768m -Xmx2048m"
 	}
 	stages {
+        stage('Checkout') {
+            checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
+        }
+        stage('Legacy') {
+            when {
+                expression { return params.LEGACY }
+            }
+            steps {
+                sh 'cp -f ${WORKSPACE}/rcp/org.eclipse.tracecompass.rcp.product/legacy/tracing.product ${WORKSPACE}/rcp/org.eclipse.tracecompass.rcp.product/'
+            }
+        }
 		stage('Build') {
 			steps {
-                checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
+                // checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
 				// git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
                 // sh 'mvn --version'
                 // sh 'java -version'
