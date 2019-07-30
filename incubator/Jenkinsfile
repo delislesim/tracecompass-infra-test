@@ -84,15 +84,15 @@ spec:
 			steps {
 				container('jnlp') {
 					sshagent (['projects-storage.eclipse.org-bot-ssh']) {
-						sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
-                        sh 'scp -r ${RCP_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_DESTINATION}'
-                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
-                        sh 'scp -r ${SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${SITE_DESTINATION}'
+						sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
+                        sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
+                        sh 'scp -r ${RCP_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_DESTINATION}'
+                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
+                        sh 'scp -r ${SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${SITE_DESTINATION}'
 					}
 				}
 			}
