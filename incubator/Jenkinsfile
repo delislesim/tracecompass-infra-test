@@ -16,11 +16,11 @@ spec:
     args: ["-c", "/home/tracecompass/.vnc/xstartup.sh && cat"]
     resources:
       requests:
-        memory: "2.6Gi"
-        cpu: "1.3"
+        memory: "4Gi"
+        cpu: "2000m"
       limits:
-        memory: "2.6Gi"
-        cpu: "1.3"
+        memory: "4Gi"
+        cpu: "2000m"
     volumeMounts:
     - name: settings-xml
       mountPath: /home/jenkins/.m2/settings.xml
@@ -84,15 +84,15 @@ spec:
 			steps {
 				container('jnlp') {
 					sshagent (['projects-storage.eclipse.org-bot-ssh']) {
-						sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
-                        sh 'ssh genie.tracecompass.incubator@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
-                        sh 'scp -r ${RCP_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_DESTINATION}'
-                        sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
-                        sh 'scp -r ${SITE_PATH} genie.tracecompass.incubator@projects-storage.eclipse.org:${SITE_DESTINATION}'
+						sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_DESTINATION}'
+            sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${RCP_SITE_DESTINATION}'
+            sh 'ssh genie.tracecompass@projects-storage.eclipse.org mkdir -p ${SITE_DESTINATION}' 
+            sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_DESTINATION}*'
+            sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${RCP_SITE_DESTINATION}*'
+            sh 'ssh genie.tracecompass@projects-storage.eclipse.org rm -rf  ${SITE_DESTINATION}*'
+            sh 'scp -r ${RCP_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_DESTINATION}'
+            sh 'scp -r ${RCP_SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${RCP_SITE_DESTINATION}'
+            sh 'scp -r ${SITE_PATH} genie.tracecompass@projects-storage.eclipse.org:${SITE_DESTINATION}'
 					}
 				}
 			}
@@ -101,7 +101,7 @@ spec:
   post {
     failure {
       emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
-      body: '''$CHANGES
+      body: '''$CHANGES\n
 ------------------------------------------
 Check console output at $BUILD_URL to view the results.''',
       recipientProviders: [culprits(), requestor()], 

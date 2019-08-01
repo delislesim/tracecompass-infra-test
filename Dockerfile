@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       zip \
       ##Xvnc
       libgtk-3-0 \
+	  libgtk2.0-0 \
       locales \
       #libgtk-3-0=3.22.30-1ubuntu1 \
       #tigervnc-standalone-server \

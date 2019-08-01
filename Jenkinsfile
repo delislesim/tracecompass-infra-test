@@ -16,11 +16,11 @@ spec:
     args: ["-c", "/home/tracecompass/.vnc/xstartup.sh && cat"]
     resources:
       requests:
-        memory: "2.6Gi"
-        cpu: "1.3"
+        memory: "4Gi"
+        cpu: "2000m"
       limits:
-        memory: "2.6Gi"
-        cpu: "1.3"
+        memory: "4Gi"
+        cpu: "2000m"
     volumeMounts:
     - name: settings-xml
       mountPath: /home/jenkins/.m2/settings.xml
@@ -56,7 +56,6 @@ spec:
 	options {
         timestamps()
 	    timeout(time: 4, unit: 'HOURS')
-		// buildDiscarder(logRotator(numToKeepStr:'10'))
 	}
 	tools {
         maven 'apache-maven-latest'
@@ -81,12 +80,6 @@ spec:
         }
 		stage('Build') {
 			steps {
-                // checkout([$class: 'GitSCM', branches: [[name: '$GERRIT_BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'BuildChooserSetting', buildChooser: [$class: 'GerritTriggerBuildChooser']]], submoduleCfg: [], userRemoteConfigs: [[refspec: '$GERRIT_REFSPEC', url: '$GERRIT_REPOSITORY_URL']]])
-				// git branch: 'master', url: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass'
-                // sh 'mvn --version'
-                // sh 'java -version'
-                // sh 'echo $HOME'
-                // sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true -DskipTests -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml'
                 sh 'mvn clean install -Pctf-grammar -Pbuild-rcp -Dmaven.repo.local=/home/jenkins/.m2/repository --settings /home/jenkins/.m2/settings.xml ${MAVEN_ARGS}'
 			}
 			post {
@@ -120,7 +113,7 @@ spec:
     post {
         failure {
             emailext subject: 'Build $BUILD_STATUS: $PROJECT_NAME #$BUILD_NUMBER!', 
-            body: '''$CHANGES
+            body: '''$CHANGES\n
 ------------------------------------------
 Check console output at $BUILD_URL to view the results.''',
             recipientProviders: [culprits(), requestor()], 
