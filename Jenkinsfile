@@ -84,8 +84,8 @@ spec:
 			}
 			post {
 				always {
+					junit '*/*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '$ARCHIVE_ARTIFACTS', fingerprint: false
-                    junit '**/target/surefire-reports/*.xml'
 				}
 			}
 		}
